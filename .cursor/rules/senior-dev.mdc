@@ -1,0 +1,594 @@
+---
+description: Senior Developer Guidelines
+globs: 
+alwaysApply: true
+---
+# Senior Developer Guidelines
+
+This document outlines best practices, principles, and methodologies for senior TypeScript developers in our production environment. These guidelines prioritize maintainability, predictability, and robust implementation to minimize technical debt.
+
+## Core Principles
+
+### Principle of Least Surprise
+
+Code should behave as other developers expect it to behave. Always choose the most obvious implementation over clever solutions.
+
+```typescript
+// ✅ GOOD: Clear and obvious
+function getUserDisplayName(user: User): string {
+  return user.displayName || `${user.firstName} ${user.lastName}`.trim() || user.email;
+}
+
+// ❌ BAD: Too clever, uses unnecessary chaining, harder to debug
+function getUserDisplayName(user: User): string {
+  return [
+    user.displayName, 
+    [user.firstName, user.lastName].filter(Boolean).join(' '), 
+    user.email
+  ].filter(Boolean)[0];
+}
+```
+
+### Backward Compatibility
+
+Maintain backward compatibility whenever possible. When breaking changes are necessary, provide migration paths and clear documentation.
+
+```typescript
+// ✅ GOOD: Backward compatible function enhancement
+function fetchUser(id: string, options?: { includeProfile?: boolean }): Promise<User> {
+  const url = `/api/users/${id}${options?.includeProfile ? '?include=profile' : ''}`;
+  return api.get(url);
+}
+
+// ❌ BAD: Breaking existing function signature
+// function fetchUser(id: string): Promise<User>
+// Changed to:
+function fetchUser(options: { id: string; includeProfile?: boolean }): Promise<User> {
+  const url = `/api/users/${options.id}${options.includeProfile ? '?include=profile' : ''}`;
+  return api.get(url);
+}
+```
+
+### Code Economy
+
+Write less code to maintain less code. Fewer lines often mean fewer bugs and easier maintenance.
+
+```typescript
+// ✅ GOOD: Concise and clear
+const isAdminUser = user.role === 'admin';
+
+// ❌ BAD: Unnecessarily verbose
+const isAdminUser = (() => {
+  if (user.role === 'admin') {
+    return true;
+  } else {
+    return false;
+  }
+})();
+```
+
+## Implementation Best Practices
+
+### Thorough Planning
+
+Never start coding until you have a clear implementation plan with:
+
+1. **Requirements Analysis**: Fully understand what the code needs to accomplish
+2. **Interface Design**: Define public APIs and data structures first
+3. **Edge Cases**: Identify and plan for all edge cases
+4. **Testing Strategy**: Determine how the code will be tested
+5. **Performance Considerations**: Understand potential bottlenecks
+6. **Security Implications**: Consider security from the start
+
+```typescript
+/**
+ * User Authentication Service
+ * 
+ * Requirements:
+ * - Handle login with email/password
+ * - Support OAuth providers (Google, GitHub)
+ * - Maintain backward compatibility with existing token format
+ * - Must work with current session management
+ * 
+ * Interface:
+ * - login(email, password): Promise<Session>
+ * - loginWithProvider(provider, token): Promise<Session>
+ * - logout(): Promise<void>
+ * 
+ * Edge cases:
+ * - Rate limiting after failed attempts
+ * - Account migration from old auth system 
+ * - Token refresh scenarios
+ * 
+ * Security considerations:
+ * - CSRF protection
+ * - XSS mitigation strategies
+ * - HTTP-only cookies
+ */
+```
+
+### Conservative Dependency Management
+
+Be extremely conservative with external dependencies:
+
+1. **Evaluate Thoroughly**: Before adding a dependency, evaluate:
+   - Maintenance status and community support
+   - Bundle size impact
+   - Security history
+   - License compatibility
+   - API stability
+
+2. **Consider Internal Implementation**: For smaller utilities, consider implementing in-house rather than adding dependencies.
+
+3. **Version Pinning**: Pin dependency versions explicitly to prevent unexpected changes.
+
+```json
+// package.json
+{
+  "dependencies": {
+    // ✅ GOOD: Exact version pinning
+    "react": "18.2.0",
+    "next": "14.0.4",
+    
+    // ❌ BAD: Using ranges that could introduce breaking changes
+    "some-library": "^2.0.0"
+  }
+}
+```
+
+### TypeScript Best Practices
+
+1. **Be Explicit Over Implicit**
+
+```typescript
+// ✅ GOOD: Explicit return type
+function calculateTotal(items: CartItem[]): number {
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
+
+// ❌ BAD: Implicit return type
+function calculateTotal(items: CartItem[]) {
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
+```
+
+2. **Use Discriminated Unions for State Management**
+
+```typescript
+// ✅ GOOD: Discriminated union for request states
+type RequestState<T> =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: T }
+  | { status: 'error'; error: Error };
+
+// Component usage
+if (state.status === 'loading') {
+  return <LoadingSpinner />;
+} else if (state.status === 'error') {
+  return <ErrorMessage error={state.error} />;
+} else if (state.status === 'success') {
+  return <DataDisplay data={state.data} />;
+}
+```
+
+3. **Prefer Type Inference When Appropriate**
+
+```typescript
+// ✅ GOOD: Let TypeScript infer array element type
+const userIds = users.map(user => user.id);
+
+// ❌ BAD: Unnecessarily explicit
+const userIds: string[] = users.map(user => user.id);
+```
+
+4. **Use Branded Types for Type Safety**
+
+```typescript
+// ✅ GOOD: Branded types for IDs to prevent mixing
+type UserId = string & { readonly __brand: unique symbol };
+type OrderId = string & { readonly __brand: unique symbol };
+
+function processUser(userId: UserId) { /* ... */ }
+
+// This won't compile:
+const orderId: OrderId = '123' as OrderId;
+processUser(orderId); // Type error!
+```
+
+## Code Review Standards
+
+### Before Submitting for Review
+
+1. **Self-Review**: Thoroughly review your own code before submission
+   - Check for logic errors and edge cases
+   - Verify type safety (run `tsc --noEmit`)
+   - Run linting and formatting (`eslint`, `prettier`)
+   - Write or update tests for all changes
+
+2. **Documentation**: Ensure all public APIs and complex logic have clear documentation
+
+3. **Commit Organization**: Clean commit history with logical units
+   - Descriptive commit messages following conventional commits
+   - Separate refactoring from feature implementation
+
+### PR Description Template
+
+```markdown
+## Changes
+Clear description of what changed and why
+
+## Testing Done
+- Unit tests added for X
+- Verified behavior with Y input
+- Tested edge case Z
+
+## Performance Impact
+- Bundle size change: +1.2kb
+- Added 1 new dependency (with justification)
+
+## Migration Path
+For breaking changes, explain how users should migrate
+
+## Screenshots
+Before/after for UI changes
+```
+
+## Performance Optimization
+
+### Early Optimization vs. Measurable Optimization
+
+1. **Avoid Premature Optimization**: Focus on correct, maintainable code first
+
+2. **Measure Before Optimizing**: Use performance profiling to identify real bottlenecks
+   - React DevTools Profiler for component rendering
+   - Lighthouse for overall page performance
+   - Chrome DevTools Performance tab for JavaScript execution
+
+3. **Document Performance Considerations**:
+
+```typescript
+/**
+ * Processes large datasets in chunks to avoid UI blocking
+ * 
+ * Performance notes:
+ * - Uses time slicing with 5ms budget per chunk
+ * - O(n) time complexity where n is dataset size
+ * - Memory usage grows linearly with dataset size
+ * - For datasets > 10k items, consider server-side processing
+ */
+function processLargeDataset(data: DataItem[]): Promise<Result> {
+  // Implementation
+}
+```
+
+### Common React/Next.js Optimizations
+
+1. **Component Memoization**: Use strategically, not by default
+
+```typescript
+// ✅ GOOD: Memoize when props are stable and component is expensive
+const ExpensiveChart = React.memo(function Chart({ data }: ChartProps) {
+  // Complex rendering logic
+});
+
+// ❌ BAD: Unnecessary memoization
+const SimpleText = React.memo(function Text({ text }: { text: string }) {
+  return <p>{text}</p>;
+});
+```
+
+2. **Server vs. Client Components**: Use server components by default in Next.js
+
+```typescript
+// pages/dashboard.tsx
+
+// ✅ GOOD: Only mark as client when needed
+export default function Dashboard() {
+  // Server component by default
+  return (
+    <Layout>
+      <DashboardHeader />
+      <InteractiveWidget client:only /> {/* Only this becomes client */}
+      <ServerRenderedTable />
+    </Layout>
+  );
+}
+```
+
+3. **Image Optimization**: Always use Next.js Image component correctly
+
+```typescript
+// ✅ GOOD: Properly implemented Next.js Image
+import Image from 'next/image';
+
+export function UserAvatar({ user }: { user: User }) {
+  return (
+    <Image
+      src={user.avatarUrl}
+      alt={`${user.name}'s avatar`}
+      width={40}
+      height={40}
+      className="rounded-full"
+    />
+  );
+}
+```
+
+## Defensive Programming
+
+### Error Handling Strategy
+
+1. **Be Explicit About Errors**: Define error types and handle them specifically
+
+```typescript
+// ✅ GOOD: Specific error handling
+try {
+  await userService.updateProfile(user);
+} catch (error) {
+  if (error instanceof ValidationError) {
+    // Handle validation errors
+    showFieldErrors(error.fields);
+  } else if (error instanceof AuthError) {
+    // Handle authentication errors
+    redirectToLogin();
+  } else {
+    // Handle unexpected errors
+    reportToErrorTracking(error);
+    showGenericError();
+  }
+}
+```
+
+2. **Fail Fast, Fail Visibly**: Detect errors as early as possible
+
+```typescript
+// ✅ GOOD: Early validation
+function transferMoney(amount: number, fromAccount: Account, toAccount: Account) {
+  if (amount <= 0) {
+    throw new ValidationError('Amount must be positive');
+  }
+  
+  if (fromAccount.balance < amount) {
+    throw new InsufficientFundsError('Insufficient funds');
+  }
+  
+  // Proceed with transfer logic
+}
+```
+
+### Input Validation
+
+Always validate external inputs, including:
+- API responses
+- User inputs
+- URL parameters
+- LocalStorage data
+
+```typescript
+// ✅ GOOD: Validate API responses with runtime type checking
+import { z } from 'zod';
+
+// Define schema
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  email: z.string().email(),
+  role: z.enum(['user', 'admin']),
+});
+
+// Type inference
+type User = z.infer<typeof UserSchema>;
+
+// Validate API response
+async function fetchUser(id: string): Promise<User> {
+  const response = await fetch(`/api/users/${id}`);
+  const data = await response.json();
+  
+  // Runtime validation
+  return UserSchema.parse(data);
+}
+```
+
+## Testing Philosophy
+
+### Tests as Documentation
+
+Write tests that serve as documentation of expected behavior:
+
+```typescript
+// ✅ GOOD: Tests document component behavior
+describe('PasswordInput', () => {
+  it('shows password when toggle button is clicked', () => {
+    render(<PasswordInput />);
+    
+    // Initially password is hidden
+    const input = screen.getByLabelText(/password/i);
+    expect(input).toHaveAttribute('type', 'password');
+    
+    // Click the toggle button
+    const toggleButton = screen.getByRole('button', { name: /show password/i });
+    fireEvent.click(toggleButton);
+    
+    // Password should now be visible
+    expect(input).toHaveAttribute('type', 'text');
+    expect(toggleButton).toHaveAccessibleName(/hide password/i);
+  });
+});
+```
+
+### Testing Strategy
+
+1. **Unit Tests**: Focus on complex business logic and utilities
+
+2. **Integration Tests**: Focus on component interactions and data flow
+
+3. **E2E Tests**: Focus on critical user journeys
+
+```
+Critical User Journeys (E2E):
+- User signup and onboarding
+- Checkout process
+- Content creation and publishing
+
+Component Integration (Integration Tests):
+- Form submission workflow
+- Authentication flow
+- Filter and search functionality
+
+Pure Logic (Unit Tests):
+- Data transformations
+- Validation logic
+- Utility functions
+```
+
+## Deployment & Production Readiness
+
+### Production Checklist
+
+Before deploying to production, ensure:
+
+1. **Error Monitoring**: Set up error tracking (Sentry, LogRocket)
+
+2. **Logging**: Implement appropriate logging levels
+
+3. **Analytics**: Verify tracking implementations
+
+4. **Performance Monitoring**: Set up RUM (Real User Monitoring)
+
+5. **Security Headers**: Implement recommended security headers
+
+```typescript
+// next.config.js
+const securityHeaders = [
+  {
+    key: 'X-DNS-Prefetch-Control',
+    value: 'on',
+  },
+  {
+    key: 'X-XSS-Protection',
+    value: '1; mode=block',
+  },
+  {
+    key: 'X-Frame-Options',
+    value: 'SAMEORIGIN',
+  },
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff',
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  // Add Content-Security-Policy appropriately
+];
+
+module.exports = {
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: securityHeaders,
+      },
+    ];
+  },
+  // Other Next.js config
+};
+```
+
+### Feature Flags
+
+Implement feature flags for controlled rollouts:
+
+```typescript
+// src/lib/features.ts
+type FeatureFlag = 'NEW_DASHBOARD' | 'BETA_FEATURE' | 'EXPERIMENTAL_API';
+
+const FEATURES: Record<FeatureFlag, boolean> = {
+  NEW_DASHBOARD: process.env.NEXT_PUBLIC_ENABLE_NEW_DASHBOARD === 'true',
+  BETA_FEATURE: process.env.NEXT_PUBLIC_ENABLE_BETA_FEATURE === 'true',
+  EXPERIMENTAL_API: false,
+};
+
+export function isFeatureEnabled(feature: FeatureFlag): boolean {
+  return FEATURES[feature] === true;
+}
+
+// Usage in components
+function DashboardPage() {
+  return (
+    <div>
+      {isFeatureEnabled('NEW_DASHBOARD') ? (
+        <NewDashboard />
+      ) : (
+        <LegacyDashboard />
+      )}
+    </div>
+  );
+}
+```
+
+## Documentation
+
+### Code Documentation Standards
+
+1. **Document Why, Not What**: Code should be self-documenting; comments explain why, not what
+
+```typescript
+// ✅ GOOD: Explains the reason behind the implementation
+function parseDate(dateString: string): Date {
+  // Safari doesn't support ISO date strings with timezone info
+  // This workaround ensures cross-browser compatibility
+  return new Date(dateString.replace(/(-\d{2}:\d{2})$/, '+00:00'));
+}
+
+// ❌ BAD: Just repeats what the code does
+function parseDate(dateString: string): Date {
+  // Replace the timezone info and create a new Date
+  return new Date(dateString.replace(/(-\d{2}:\d{2})$/, '+00:00'));
+}
+```
+
+2. **Document Public APIs**: All exported functions, types, and components should have JSDoc comments
+
+```typescript
+/**
+ * Formats a date according to the user's locale and preferences
+ *
+ * @param date - The date to format
+ * @param options - Formatting options
+ * @param options.includeTime - Whether to include the time
+ * @param options.format - Specific format to use (overrides locale formatting)
+ * @returns Formatted date string
+ * 
+ * @example
+ * ```ts
+ * formatDate(new Date(), { includeTime: true })
+ * // => "Feb 25, 2025, 2:30 PM"
+ * ```
+ */
+export function formatDate(
+  date: Date,
+  options?: { includeTime?: boolean; format?: string }
+): string {
+  // Implementation
+}
+```
+
+## Final Notes
+
+### Continuous Improvement
+
+1. **Code Reviews as Learning Opportunities**: Use code reviews to share knowledge and improve collectively
+
+2. **Embrace Refactoring**: Continuously improve the codebase through targeted refactoring
+
+3. **Stay Current, Not Bleeding Edge**: Follow established patterns and avoid unproven technologies in production code
+
+Remember that production code prioritizes:
+- Reliability over novelty
+- Maintainability over cleverness
+- Predictability over flexibility
+
+By following these guidelines, you'll help ensure our TypeScript project remains maintainable, performant, and robust as it grows and evolves.
