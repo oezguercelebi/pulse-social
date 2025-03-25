@@ -1,9 +1,10 @@
 # Pulse Implementation TODO List
 
 ## Setup
-- [ ] Initialize Next.js project with TypeScript and Tailwind CSS
-- [ ] Set up Supabase project and initialize database tables
-- [ ] Configure Radix UI and create base component library
+- [x] Initialize Next.js project with TypeScript and Tailwind CSS
+- [x] Set up Supabase project and initialize database tables
+- [x] Configure Radix UI and create base component library
+- [x] Set up Radix Themes for enhanced UI components
 - [ ] Set up authentication with Supabase Auth
 
 ## Core Features

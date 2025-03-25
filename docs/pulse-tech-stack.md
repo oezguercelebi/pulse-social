@@ -4,7 +4,7 @@
 - **Frontend Framework**: Next.js 15+ (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **UI Components**: Radix UI
+- **UI Components**: Radix UI & Radix Themes
 - **Backend/Database**: Supabase
 
 ## Optimized Configuration
@@ -16,8 +16,9 @@
 - Utilize streaming for initial page load performance
 
 ### UI Components
-- Radix UI for accessible, unstyled primitives
-- Tailwind CSS for styling Radix components
+- Radix Themes for a complete, accessible design system
+- Radix UI primitives for customizable components
+- Tailwind CSS for additional styling customization
 - Create a minimal component library focused on core needs
 - Prioritize reusable, composable components
 
