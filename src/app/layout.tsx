@@ -6,9 +6,6 @@ import './globals.css';
 import '@radix-ui/themes/styles.css';
 import { Theme } from '@radix-ui/themes';
 
-// Import Navigation
-import { Navigation } from '@/components/ui/navigation';
-
 // Import theme configuration
 import { themeOptions } from '@/lib/theme-config';
 
@@ -28,7 +25,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Theme {...themeOptions}>
-          <Navigation />
           {children}
         </Theme>
       </body>
