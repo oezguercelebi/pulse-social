@@ -1,10 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Button, Card, Flex, Heading, TextArea } from '@radix-ui/themes';
-import { PaperPlane, ImageSquare } from '@phosphor-icons/react';
+import { Box, Button, Dialog, Flex, TextArea, TextField } from '@radix-ui/themes';
+import { PaperPlane, X, ImageSquare } from '@phosphor-icons/react';
 
-export default function CreatePage() {
+type CreatePostModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
   const [postContent, setPostContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -20,9 +25,9 @@ export default function CreatePage() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Reset form after success
+      // Reset form and close modal on success
       setPostContent('');
-      alert('Post created successfully!');
+      onClose();
     } catch (error) {
       console.error('Failed to create post', error);
     } finally {
@@ -31,10 +36,21 @@ export default function CreatePage() {
   };
   
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <Heading size="6" mb="4">Create a Pulse</Heading>
-      
-      <Card size="2">
+    <Dialog.Root open={isOpen} onOpenChange={open => !open && onClose()}>
+      <Dialog.Content style={{ maxWidth: 450 }}>
+        <Flex justify="between" align="center" mb="4">
+          <Dialog.Title>Create a Pulse</Dialog.Title>
+          <Dialog.Close>
+            <Button variant="ghost" color="gray" onClick={onClose}>
+              <X weight="bold" />
+            </Button>
+          </Dialog.Close>
+        </Flex>
+        
+        <Dialog.Description size="2" mb="4">
+          Share your thoughts in 280 characters or less.
+        </Dialog.Description>
+
         <form onSubmit={handleSubmit}>
           <Box mb="4">
             <TextArea 
@@ -42,7 +58,7 @@ export default function CreatePage() {
               value={postContent}
               onChange={e => setPostContent(e.target.value)}
               maxLength={280}
-              style={{ minHeight: 150 }}
+              style={{ minHeight: 120 }}
             />
             <Flex justify="between" align="center" mt="2">
               <Button variant="ghost" type="button">
@@ -54,7 +70,15 @@ export default function CreatePage() {
             </Flex>
           </Box>
           
-          <Flex justify="end">
+          <Flex justify="end" gap="3">
+            <Button 
+              variant="soft" 
+              color="gray" 
+              onClick={onClose} 
+              type="button"
+            >
+              Cancel
+            </Button>
             <Button 
               disabled={!postContent.trim() || isSubmitting} 
               type="submit"
@@ -65,7 +89,7 @@ export default function CreatePage() {
             </Button>
           </Flex>
         </form>
-      </Card>
-    </div>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }

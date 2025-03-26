@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Flex, Box, Heading, Button, Avatar, Separator } from '@radix-ui/themes';
 import Link from 'next/link';
 import {
@@ -10,8 +11,10 @@ import {
   PencilSimpleLine,
   Pulse,
 } from "@phosphor-icons/react";
+import { CreatePostModal } from '@/components/features/create-post-modal';
 
 export function Sidebar() {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   return (
     <Box 
       className="h-screen sticky top-0 left-0 w-64 bg-white shadow-sm"
@@ -98,8 +101,9 @@ export function Sidebar() {
                 </Flex>
               </Button>
             </Link>
-            <Link href="/create" className="text-center" style={{ marginBottom: 0 }}>
+            <Box className="text-center" style={{ marginBottom: 0 }}>
               <Button 
+                onClick={() => setIsCreateModalOpen(true)}
                 style={{ 
                   backgroundColor: '#4c8bf5',
                   borderRadius: '50%',
@@ -114,7 +118,7 @@ export function Sidebar() {
               >
                 <PencilSimpleLine weight="fill" size={24} color="white" />
               </Button>
-            </Link>
+            </Box>
           </Flex>
         </nav>
         
@@ -135,6 +139,12 @@ export function Sidebar() {
           </Flex>
         </Link>
       </Box>
+      
+      {/* Create Post Modal */}
+      <CreatePostModal 
+        isOpen={isCreateModalOpen} 
+        onClose={() => setIsCreateModalOpen(false)} 
+      />
     </Box>
   );
 }
