@@ -8,25 +8,24 @@ import {
   MagnifyingGlass,
   BookmarkSimple,
   PencilSimpleLine,
+  Pulse,
 } from "@phosphor-icons/react";
 
 export function Sidebar() {
   return (
     <Box 
-      className="h-screen sticky top-0 left-0 w-64 bg-white shadow-sm border-r"
+      className="h-screen sticky top-0 left-0 w-64 bg-white shadow-sm"
       style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}
     >
       {/* Logo section (Home) - using flex-none to maintain size */}
       <Box className="flex-none">
         <Flex align="center" justify="center" py="5" px="4">
           <Link href="/" aria-label="Home">
-            <Flex align="center" gap="2">
-              <House weight="bold" size={24} />
-              <Heading size="5" as="h1">Pulse</Heading>
+            <Flex align="center" justify="center">
+              <Pulse weight="duotone" size={32} color="#4c8bf5" />
             </Flex>
           </Link>
         </Flex>
-        <Separator size="4" />
       </Box>
       
       {/* Navigation section - using flex-1 for dynamic spacing */}
@@ -54,7 +53,7 @@ export function Sidebar() {
               overflow: 'hidden' // Contain hover states
             }}
           >
-            <Link href="/timeline" className="text-center">
+            <Link href="/" className="text-center">
               <Button 
                 variant="ghost" 
                 className="rounded-full p-0" 
@@ -125,19 +124,14 @@ export function Sidebar() {
       
       {/* User profile section - using flex-none to maintain size */}
       <Box className="flex-none">
-        <Separator size="4" />
         <Link href="/profile">
-          <Flex p="4" align="center" gap="3" className="hover:bg-gray-50">
+          <Flex p="4" align="center" className="hover:bg-gray-50 justify-center">
             <Avatar
               size="3"
               src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453"
               fallback="A"
               radius="full"
             />
-            <Box>
-              <Heading size="2" as="h3">User Name</Heading>
-              <Box className="text-sm text-gray-500">@username</Box>
-            </Box>
           </Flex>
         </Link>
       </Box>
