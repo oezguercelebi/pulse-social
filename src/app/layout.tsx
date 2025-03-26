@@ -2,15 +2,12 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
-// Import Radix Themes
+// Import Radix Themes styles
 import '@radix-ui/themes/styles.css';
-import { Theme, Flex } from '@radix-ui/themes';
 
-// Import Sidebar
+// Import components
+import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Sidebar } from '@/components/ui/sidebar';
-
-// Import theme configuration
-import { themeOptions } from '@/lib/theme-config';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,12 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="overflow-hidden">
       <body className={`${inter.className} overflow-hidden`}>
-        <Theme {...themeOptions}>
-          <Flex className="h-screen overflow-hidden">
+        <ThemeProvider>
+          <div className="flex h-screen overflow-hidden">
             <Sidebar />
             <main className="flex-1 overflow-hidden">{children}</main>
-          </Flex>
-        </Theme>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

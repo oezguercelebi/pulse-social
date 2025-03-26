@@ -1,5 +1,14 @@
+'use client';
+
 import { Flex, Box, Heading, Button, Avatar, Separator } from '@radix-ui/themes';
 import Link from 'next/link';
+import {
+  House,
+  Timer,
+  MagnifyingGlass,
+  BookmarkSimple,
+  PencilSimpleLine,
+} from "@phosphor-icons/react";
 
 export function Sidebar() {
   return (
@@ -11,7 +20,10 @@ export function Sidebar() {
       <Box className="flex-none">
         <Flex align="center" justify="center" py="5" px="4">
           <Link href="/" aria-label="Home">
-            <Heading size="5" as="h1">Pulse</Heading>
+            <Flex align="center" gap="2">
+              <House weight="bold" size={24} />
+              <Heading size="5" as="h1">Pulse</Heading>
+            </Flex>
           </Link>
         </Flex>
         <Separator size="4" />
@@ -35,22 +47,30 @@ export function Sidebar() {
           >
             <Link href="/timeline" className="w-full text-center">
               <Button variant="ghost" className="w-3/4 mx-auto">
-                Timeline
+                <Flex align="center" gap="2">
+                  <Timer weight="regular" size={30} />
+                </Flex>
               </Button>
             </Link>
             <Link href="/discover" className="w-full text-center">
               <Button variant="ghost" className="w-3/4 mx-auto">
-                Discover
+                <Flex align="center" gap="2">
+                  <MagnifyingGlass weight="regular" size={30} />
+                </Flex>
               </Button>
             </Link>
             <Link href="/bookmarks" className="w-full text-center">
               <Button variant="ghost" className="w-3/4 mx-auto">
-                Bookmarks
+                <Flex align="center" gap="2">
+                  <BookmarkSimple weight="regular" size={30} />
+                </Flex>
               </Button>
             </Link>
             <Link href="/create" className="w-full text-center">
               <Button variant="solid" className="w-3/4 mx-auto">
-                New Pulse
+                <Flex align="center" gap="2">
+                  <PencilSimpleLine weight="regular" size={30} />
+                </Flex>
               </Button>
             </Link>
           </Flex>
