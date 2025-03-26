@@ -42,35 +42,78 @@ export function Sidebar() {
         <nav className="w-full">
           <Flex 
             direction="column" 
-            gap="3"
-            className="w-full px-4 items-center"
+            gap="2"
+            className="items-center"
+            style={{ 
+              padding: '0',
+              background: 'white',
+              borderRadius: '30px',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.1)',
+              width: '48px',
+              margin: '0 auto',
+              overflow: 'hidden' // Contain hover states
+            }}
           >
-            <Link href="/timeline" className="w-full text-center">
-              <Button variant="ghost" className="w-3/4 mx-auto">
-                <Flex align="center" gap="2">
-                  <Timer weight="regular" size={30} />
+            <Link href="/timeline" className="text-center">
+              <Button 
+                variant="ghost" 
+                className="rounded-full p-0" 
+                style={{ 
+                  width: '48px', 
+                  height: '48px',
+                  borderRadius: '50%'
+                }}
+              >
+                <Flex align="center" justify="center">
+                  <House weight="regular" size={24} />
                 </Flex>
               </Button>
             </Link>
-            <Link href="/discover" className="w-full text-center">
-              <Button variant="ghost" className="w-3/4 mx-auto">
-                <Flex align="center" gap="2">
-                  <MagnifyingGlass weight="regular" size={30} />
+            <Link href="/discover" className="text-center">
+              <Button 
+                variant="ghost" 
+                className="rounded-full p-0" 
+                style={{ 
+                  width: '48px', 
+                  height: '48px',
+                  borderRadius: '50%'
+                }}
+              >
+                <Flex align="center" justify="center">
+                  <MagnifyingGlass weight="regular" size={24} />
                 </Flex>
               </Button>
             </Link>
-            <Link href="/bookmarks" className="w-full text-center">
-              <Button variant="ghost" className="w-3/4 mx-auto">
-                <Flex align="center" gap="2">
-                  <BookmarkSimple weight="regular" size={30} />
+            <Link href="/bookmarks" className="text-center">
+              <Button 
+                variant="ghost" 
+                className="rounded-full p-0" 
+                style={{ 
+                  width: '48px', 
+                  height: '48px',
+                  borderRadius: '50%'
+                }}
+              >
+                <Flex align="center" justify="center">
+                  <BookmarkSimple weight="regular" size={24} />
                 </Flex>
               </Button>
             </Link>
-            <Link href="/create" className="w-full text-center">
-              <Button variant="solid" className="w-3/4 mx-auto">
-                <Flex align="center" gap="2">
-                  <PencilSimpleLine weight="regular" size={30} />
-                </Flex>
+            <Link href="/create" className="text-center" style={{ marginBottom: 0 }}>
+              <Button 
+                style={{ 
+                  backgroundColor: '#4c8bf5',
+                  borderRadius: '50%',
+                  width: '48px',
+                  height: '48px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0,
+                  margin: 0
+                }}
+              >
+                <PencilSimpleLine weight="fill" size={24} color="white" />
               </Button>
             </Link>
           </Flex>
@@ -100,4 +143,4 @@ export function Sidebar() {
       </Box>
     </Box>
   );
-} 
+}
