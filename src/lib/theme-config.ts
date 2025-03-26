@@ -1,8 +1,8 @@
-import { ThemeOptions } from '@radix-ui/themes';
+import { Theme } from '@radix-ui/themes';
 
 // This file centralizes theme configuration for consistency
 
-export const themeOptions: ThemeOptions = {
+export const themeOptions = {
   // Light mode by default, can be toggled
   appearance: 'light',
   // The primary color of the UI
@@ -14,7 +14,7 @@ export const themeOptions: ThemeOptions = {
   // Potential for dark/light mode switching
   hasBackground: true,
   // Can be used for high contrast mode
-  highContrast: false,
+  highcontrast: "false",
 };
 
 // Theme colors available in Radix Themes
@@ -66,4 +66,4 @@ export const themePresets = {
     accentColor: 'violet',
     radius: 'medium',
   },
-} as const; 
+} as const;
