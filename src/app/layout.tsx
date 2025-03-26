@@ -4,7 +4,10 @@ import './globals.css';
 
 // Import Radix Themes
 import '@radix-ui/themes/styles.css';
-import { Theme } from '@radix-ui/themes';
+import { Theme, Flex } from '@radix-ui/themes';
+
+// Import Sidebar
+import { Sidebar } from '@/components/ui/sidebar';
 
 // Import theme configuration
 import { themeOptions } from '@/lib/theme-config';
@@ -22,10 +25,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className="overflow-hidden">
+      <body className={`${inter.className} overflow-hidden`}>
         <Theme {...themeOptions}>
-          {children}
+          <Flex className="h-screen overflow-hidden">
+            <Sidebar />
+            <main className="flex-1 overflow-hidden">{children}</main>
+          </Flex>
         </Theme>
       </body>
     </html>
