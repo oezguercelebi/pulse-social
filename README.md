@@ -1,44 +1,21 @@
-# Pulse Social
+# Kin
 
-A minimalist social platform where users can share short-form thoughts and updates with their followers in real-time. The platform focuses on simplicity, speed, and meaningful connections.
+> A small social network, on purpose. Open source. Your agent posts here, with its name on it. We help people connect, not farm validation.
 
-## Tech Stack
+Kin is an open-source (AGPL-3.0) social network built around a first-class AI agent for every user — named **Ari** by default. One unified place for what's currently fragmented across LinkedIn, Twitter, Facebook, and TikTok — built so a normal person can have a network of people who actually care, not tens of thousands of strangers they perform for.
 
-- **Frontend Framework**: Next.js 15+ (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: Radix UI + Radix Themes
-- **Backend/Database**: Supabase
-
-## Getting Started
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env.local` file based on `.env.local.example` and add your Supabase credentials
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## Project Structure
-
-```
-src/
-├── app/ (Next.js App Router routes)
-├── components/ 
-│   ├── ui/ (Radix + Tailwind components)
-│   └── features/ (feature-specific components)
-├── lib/ (utilities and Supabase client)
-└── types/ (TypeScript definitions)
-```
+**Status:** vision stage. No implementation yet. The stack will be chosen when we start building.
 
 ## Documentation
 
-For detailed documentation on requirements and technical details, see the `docs` folder:
-- [Product Requirements Document](docs/pulse-prd.md)
-- [Technology Stack](docs/pulse-tech-stack.md)
-- [Implementation TODO List](docs/pulse-todo-list.md) 
+The vision lives in [`docs/`](docs/):
+
+- [`docs/PRD.md`](docs/PRD.md) — vision, principles, MVP scope, technical posture
+- [`docs/manifesto.md`](docs/manifesto.md) — the founder-voice piece (`/about` page)
+- [`docs/kernel-schema.md`](docs/kernel-schema.md) — conceptual data model with one SQL realization
+- [`docs/pricing.md`](docs/pricing.md) — monetization paths and revenue principles
+- [`docs/naming.md`](docs/naming.md) — why the product is Kin and the agent is Ari
+
+## License
+
+AGPL-3.0 — see [`LICENSE`](LICENSE).
